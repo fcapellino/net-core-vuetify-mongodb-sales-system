@@ -2,7 +2,7 @@
 {
     using FluentValidation;
 
-    public class GetCateoriesListRequest
+    public class GetCategoriesListRequest
     {
         public string SearchQuery { get; set; }
         public string SortBy { get; set; }
@@ -11,10 +11,10 @@
         public int PageSize { get; set; }
     }
 
-    public class GetCateoriesListRequestValidator
-        : AbstractValidator<GetCateoriesListRequest>
+    public class GetCategoriesListRequestValidator
+        : AbstractValidator<GetCategoriesListRequest>
     {
-        public GetCateoriesListRequestValidator()
+        public GetCategoriesListRequestValidator()
         {
         }
     }

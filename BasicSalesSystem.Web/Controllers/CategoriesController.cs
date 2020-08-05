@@ -52,7 +52,7 @@
 
         [HttpGet]
         //[Authorization(UserRoles.Administrator)]
-        public async Task<IActionResult> GetCateoriesList(GetCateoriesListRequest request)
+        public async Task<IActionResult> GetCateoriesList(GetCategoriesListRequest request)
         {
             var query = _mongoDbService.GetCollection<Category>(Collections.Categories);
             var filter = new FilterDefinitionBuilder<Category>().Empty;
@@ -66,9 +66,9 @@
 
             var totalItemCount = await query.Find(filter).CountDocumentsAsync();
             var items = await query.Find(filter)
-                                .ApplyOrdering(request.SortBy, request.SortDesc)
-                                .ApplyPaging(request.Page, request.PageSize)
-                                .ToListAsync();
+                    .ApplyOrdering(request.SortBy, request.SortDesc)
+                    .ApplyPaging(request.Page, request.PageSize)
+                    .ToListAsync();
 
             var resources = new PagedListResource()
             {
