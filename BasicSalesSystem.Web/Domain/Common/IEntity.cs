@@ -1,10 +1,7 @@
-﻿namespace BasicSalesSystem.Domain.Common
+﻿namespace BasicSalesSystem.Web.Domain.Common
 {
-    using System;
-
     public interface IEntity
     {
-        Guid Id { get; set; }
-        bool IsDeleted { get; set; }
+        string Id { get; set; }
     }
 }

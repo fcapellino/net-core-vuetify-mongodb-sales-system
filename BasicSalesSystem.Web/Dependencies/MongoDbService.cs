@@ -13,8 +13,9 @@
 
         public MongoDbService(IConfiguration configuration)
         {
-            _mongoClient = new MongoClient(configuration.GetSection("MongoDb:ConnectionString").Value);
-            _database = _mongoClient.GetDatabase(configuration.GetSection("MongoDb:Database").Value);
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            _mongoClient = new MongoClient(connectionString);
+            _database = _mongoClient.GetDatabase(MongoUrl.Create(connectionString).DatabaseName);
         }
 
         public IMongoCollection<TEntity> GetCollection<TEntity>(string collection) where TEntity : class => _database.GetCollection<TEntity>(collection);

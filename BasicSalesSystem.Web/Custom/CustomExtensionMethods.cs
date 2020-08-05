@@ -1,22 +1,22 @@
 ﻿namespace BasicSalesSystem.Web.Custom
 {
-    using System.Linq;
-    using System.Linq.Dynamic.Core;
     using System.Text.RegularExpressions;
+    using MongoDB.Driver;
 
     public static class CustomExtensionMethods
     {
-        public static IQueryable<T> ApplyOrdering<T>(this IQueryable<T> query, string propertyName)
+        public static IFindFluent<T, T> ApplyOrdering<T>(this IFindFluent<T, T> query, string propertyName, bool descending)
         {
-            if (!Regex.IsMatch(propertyName ?? string.Empty, "^[a-zA-Z]+(.[a-zA-Z]+)? (asc|desc)$"))
+            if (!Regex.IsMatch(propertyName ?? string.Empty, "^[a-zA-Z]+(.[a-zA-Z]+)?$"))
             {
                 return query;
             }
 
-            return query.OrderBy(propertyName);
+            var sortDefinition = descending ? Builders<T>.Sort.Descending(propertyName) : Builders<T>.Sort.Ascending(propertyName);
+            return query.Sort(sortDefinition);
         }
 
-        public static IQueryable<T> ApplyPaging<T>(this IQueryable<T> query, int page, int pageSize)
+        public static IFindFluent<T, T> ApplyPaging<T>(this IFindFluent<T, T> query, int page, int pageSize)
         {
             if (page <= 0)
             {
@@ -28,7 +28,7 @@
                 pageSize = 5;
             }
 
-            return query.Skip((page - 1) * pageSize).Take(pageSize);
+            return query.Skip((page - 1) * pageSize).Limit(pageSize);
         }
 
         public static string NullIfEmpty(this string value)

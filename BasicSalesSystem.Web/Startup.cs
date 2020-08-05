@@ -2,10 +2,11 @@ namespace BasicSalesSystem.Web
 {
     using System;
     using System.Text;
+    using AspNetCore.Identity.Mongo;
     using BasicSalesSystem.Domain.Entities;
-    using BasicSalesSystem.Web.Custom;
-    using BasicSalesSystem.Web.Dependencies.EmailService;
-    using BasicSalesSystem.Web.Dependencies.MongoDbService;
+    using Custom;
+    using Dependencies.EmailService;
+    using Dependencies.MongoDbService;
     using FluentValidation.AspNetCore;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Authorization;
@@ -19,6 +20,7 @@ namespace BasicSalesSystem.Web
     using Microsoft.Extensions.Hosting;
     using Microsoft.IdentityModel.Tokens;
     using Microsoft.OpenApi.Models;
+    using MongoDB.Bson.Serialization.Conventions;
     using Newtonsoft.Json.Serialization;
     using VueCliMiddleware;
 
@@ -59,6 +61,11 @@ namespace BasicSalesSystem.Web
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 });
 
+            #region MONGODB CONFIGURATION
+            var conventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
+            ConventionRegistry.Register("CamelCase", conventionPack, t => true);
+            #endregion
+
             #region SERVICES
             services.AddScoped<EmailService>();
             services.AddScoped<MongoDbService>();
@@ -66,7 +73,7 @@ namespace BasicSalesSystem.Web
 
             #region IDENTITY
             services
-                .AddIdentity<ApplicationUser, ApplicationRole>(options =>
+                .AddIdentityMongoDbProvider<ApplicationUser, ApplicationRole>(options =>
                 {
                     options.User.RequireUniqueEmail = false;
                     options.User.AllowedUserNameCharacters = null;
@@ -79,9 +86,10 @@ namespace BasicSalesSystem.Web
 
                     options.Lockout.AllowedForNewUsers = true;
                     options.Lockout.MaxFailedAccessAttempts = 5;
+                }, mongoIdentityOptions =>
+                {
+                    mongoIdentityOptions.ConnectionString = _configuration.GetConnectionString("DefaultConnection");
                 })
-                .AddRoles<ApplicationRole>()
-                //.AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
             #endregion
 
@@ -127,7 +135,7 @@ namespace BasicSalesSystem.Web
                         { new OpenApiSecurityScheme() { Reference = new OpenApiReference(){ Id = "JwtAuth", Type = ReferenceType.SecurityScheme }}, new string[] { } }
                     });
             });
-            #endregion
+            #endregion      
 
             // in production, the vue files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -164,12 +172,13 @@ namespace BasicSalesSystem.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(name: "default", pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
 
                 if (env.IsDevelopment())
                 {
                     endpoints.MapToVueCliProxy(
-                        "{*path}",
-                        new SpaOptions { SourcePath = "ClientApp" },
+                        pattern: "{*path}",
+                        options: new SpaOptions { SourcePath = "ClientApp" },
                         npmScript: "serve",
                         regex: "Compiled successfully");
                 }

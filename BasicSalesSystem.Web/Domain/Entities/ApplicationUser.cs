@@ -1,31 +1,23 @@
 ﻿namespace BasicSalesSystem.Domain.Entities
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using BasicSalesSystem.Domain.Common;
-    using Microsoft.AspNetCore.Identity;
+    using AspNetCore.Identity.Mongo.Model;
+    using MongoDB.Bson.Serialization.Attributes;
 
-    [Table("AspNetUsers")]
-    public sealed class ApplicationUser : IdentityUser<Guid>, IEntity
+    public sealed class ApplicationUser : MongoUser
     {
-        public ApplicationUser()
-        {
-            Id = Guid.NewGuid();
-            UserName = Id.ToString();
-        }
+        [BsonRequired]
+        public string FullName { get; set; }
 
-        [Required, MaxLength(30)]
-        public string FirstName { get; set; }
+        [BsonRequired]
+        public string Address { get; set; }
 
-        [Required, MaxLength(30)]
-        public string LastName { get; set; }
+        [BsonRequired]
+        public int DocumentType { get; set; }
 
-        [InverseProperty("User")]
-        public IList<ApplicationUserRole> UserRoles { get; set; }
+        [BsonRequired]
+        public int DocumentNumber { get; set; }
 
-        [Required]
-        public bool IsDeleted { get; set; }
+        [BsonRequired]
+        public bool Enabled { get; set; }
     }
 }
