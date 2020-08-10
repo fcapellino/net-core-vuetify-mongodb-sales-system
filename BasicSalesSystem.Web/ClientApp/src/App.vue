@@ -1,6 +1,5 @@
 <template>
     <v-app>
-
         <v-navigation-drawer persistent
                              :mini-variant="miniVariant"
                              :mini-variant-width="60"
@@ -61,7 +60,6 @@
                 </template>
             </v-list>
         </v-navigation-drawer>
-
         <v-app-bar app :clipped-left="clipped" color="primary" dark>
             <v-app-bar-nav-icon @click.stop=""></v-app-bar-nav-icon>
             <v-btn class="d-none d-lg-flex" icon @click.stop="miniVariant = !miniVariant">
@@ -75,19 +73,20 @@
             <router-view />
         </v-main>
 
-        <v-footer app>
-            <span>&nbsp;Software Ateliers&nbsp;&copy;&nbsp;2020</span>
-        </v-footer>
-
+        <v-snackbars :objects.sync="messages" :timeout="40000" bottom right></v-snackbars>
+        <v-footer app><span>&nbsp;Software &nbsp;&copy;&nbsp;2020</span></v-footer>
     </v-app>
 </template>
 
 <script lang="ts">
     import HelloWorld from '@/components/HelloWorld.vue';
-    import { Component, Vue } from 'vue-property-decorator';
+    import VSnackbars from "@/components/v-snackbars.vue";
+    import { Component, Vue, Watch } from 'vue-property-decorator';
 
     @Component({
-        components: { HelloWorld },
+        components: { HelloWorld, VSnackbars },
+        methods: {
+        }
     })
     export default class App extends Vue {
         private clipped: boolean = true;
@@ -117,5 +116,45 @@
                 ],
             }
         ];
+
+        private messages: Array<any> = [];
+        @Watch('$store.state.notifications', { immediate: true, deep: true })
+        private async onNewNotification(value: any, oldValue: any) {
+            var self = this;
+            var notification = self.$store.getters['notifications/get_notification'];
+            if (notification) {
+                self.messages.push({
+                    message: notification.message,
+                    color: notification.type
+                });
+            }
+        }
     }
 </script>
+
+<style>
+    [class$="--disabled"],
+    [class*="--disabled "] * {
+        color: #616161 !important
+    }
+
+    .v-snack__wrapper{
+        max-width:350px;
+    }
+
+    input[disabled] {
+        color: #616161 !important
+    }
+
+    textarea[disabled] {
+        color: #616161 !important
+    }
+
+    .p-green {
+        color: #3cb371
+    }
+
+    .p-red {
+        color: #cd5c5c
+    }
+</style>

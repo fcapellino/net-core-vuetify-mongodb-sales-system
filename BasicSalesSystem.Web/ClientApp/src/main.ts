@@ -10,7 +10,6 @@ import './registerServiceWorker';
 import router from './router';
 
 Vue.config.productionTip = false;
-
 Vue.filter('date', dateFilter);
 
 new Vue({

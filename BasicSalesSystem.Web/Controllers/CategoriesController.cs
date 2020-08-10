@@ -52,10 +52,11 @@
 
         [HttpGet]
         //[Authorization(UserRoles.Administrator)]
-        public async Task<IActionResult> GetCateoriesList(GetCategoriesListRequest request)
+        public async Task<IActionResult> GetCategoriesList(GetCategoriesListRequest request)
         {
             var query = _mongoDbService.GetCollection<Category>(Collections.Categories);
             var filter = new FilterDefinitionBuilder<Category>().Empty;
+            var findOptions = new FindOptions() { Collation = new Collation("en") };
 
             if (!string.IsNullOrEmpty(request.SearchQuery))
             {
@@ -65,7 +66,7 @@
             }
 
             var totalItemCount = await query.Find(filter).CountDocumentsAsync();
-            var items = await query.Find(filter)
+            var items = await query.Find(filter, findOptions)
                     .ApplyOrdering(request.SortBy, request.SortDesc)
                     .ApplyPaging(request.Page, request.PageSize)
                     .ToListAsync();
@@ -135,7 +136,7 @@
 
         [HttpPost]
         //[Authorization(UserRoles.Administrator)]
-        public async Task<IActionResult> ActivateCategory(String id)
+        public async Task<IActionResult> ActivateOrDeactivateCategory(String id)
         {
             var filter = Builders<Category>.Filter.Where(x => x.Id.Equals(id));
             var category = await _mongoDbService.GetCollection<Category>(Collections.Categories)
@@ -150,33 +151,7 @@
             await _mongoDbService.StartTransactionAsync();
 
             var updateDefinition = new UpdateDefinitionBuilder<Category>()
-                .Set(x => x.Active, true);
-
-            await _mongoDbService.GetCollection<Category>(Collections.Categories)
-                 .UpdateOneAsync(session, filter, updateDefinition);
-
-            await _mongoDbService.CommitTransactionAsync();
-            return new SuccessResult();
-        }
-
-        [HttpPost]
-        //[Authorization(UserRoles.Administrator)]
-        public async Task<IActionResult> DeactivateCategory(String id)
-        {
-            var filter = Builders<Category>.Filter.Where(x => x.Id.Equals(id));
-            var category = await _mongoDbService.GetCollection<Category>(Collections.Categories)
-                .Find(filter).FirstOrDefaultAsync();
-
-            if (category == null)
-            {
-                throw new CustomException("Invalid category specified.");
-            }
-
-            var session = await _mongoDbService.GetSessionAsync();
-            await _mongoDbService.StartTransactionAsync();
-
-            var updateDefinition = new UpdateDefinitionBuilder<Category>()
-                .Set(x => x.Active, false);
+                .Set(x => x.Active, !category.Active);
 
             await _mongoDbService.GetCollection<Category>(Collections.Categories)
                  .UpdateOneAsync(session, filter, updateDefinition);

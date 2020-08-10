@@ -6,15 +6,15 @@ import { CounterState } from './types';
 import { RootState } from '../types';
 
 export const state: CounterState = {
-  counter: 0,
+    counter: 0,
 };
 
 const namespaced: boolean = true;
 
 export const counter: Module<CounterState, RootState> = {
-  namespaced,
-  state,
-  getters,
-  actions,
-  mutations,
+    namespaced,
+    state,
+    getters,
+    actions,
+    mutations,
 };

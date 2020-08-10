@@ -1,13 +1,16 @@
 import { ActionTree } from 'vuex';
-import axios from 'axios';
-import { CounterState } from './types';
 import { RootState } from '../types';
+import { NotificationsState } from './types';
 
-export const actions: ActionTree<CounterState, RootState> = {
-  increment({ commit }): any {
-    commit('incrementCounter');
-  },
-  reset({ commit }): any {
-    commit('resetCounter');
-  },
+export const actions: ActionTree<NotificationsState, RootState> = {
+    push_success_notification({ commit }, message: string): any {
+        if (message?.trim()) {
+            commit('push_success_notification', { message: message, type: 'success', timestamp: new Date() });
+        }
+    },
+    push_error_notification({ commit }, message: string): any {
+        if (message?.trim()) {
+            commit('push_error_notification', { message: message, type: 'error', timestamp: new Date() });
+        }
+    }
 };

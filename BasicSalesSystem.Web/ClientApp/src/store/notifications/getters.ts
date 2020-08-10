@@ -1,9 +1,9 @@
 import { GetterTree } from 'vuex';
-import { CounterState } from './types';
 import { RootState } from '../types';
+import { Notification, NotificationsState } from './types';
 
-export const getters: GetterTree<CounterState, RootState> = {
-    currentCount(state): number {
-        return state.counter;
-    },
+export const getters: GetterTree<NotificationsState, RootState> = {
+    get_notification(state): Notification {
+        return state.data;
+    }
 };
