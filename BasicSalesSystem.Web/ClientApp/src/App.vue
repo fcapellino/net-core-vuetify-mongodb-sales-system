@@ -67,21 +67,102 @@
             </v-btn>
             <v-toolbar-title v-text="title"></v-toolbar-title>
             <v-spacer></v-spacer>
+            <v-toolbar-title class="caption" style="text-align:end;">
+                <div>USERNAME USERNAME</div>
+                <div><small>ADMINISTRADOR</small></div>
+            </v-toolbar-title>
+            <v-menu bottom left>
+                <template v-slot:activator="{ on }">
+                    <v-btn dark
+                           icon
+                           v-on="on">
+                        <v-icon>mdi-account-box</v-icon>
+                    </v-btn>
+                </template>
+                <v-list>
+                    <v-list-item link v-on:click.stop="changePasswordDialog.display=true">
+                        <v-list-item-title>Change password</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item link v-on:click.stop="">
+                        <v-list-item-title>Logout</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
         </v-app-bar>
 
         <v-main>
             <router-view />
         </v-main>
 
+        <v-dialog v-model="changePasswordDialog.display" fullscreen hide-overlay transition="dialog-bottom-transition">
+            <v-card>
+                <v-toolbar dark color="primary">
+                    <v-toolbar-title>Change password</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-toolbar-items>
+                        <v-btn icon dark v-on:click.stop="closeChangePasswordDialog()">
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                    </v-toolbar-items>
+                </v-toolbar>
+                <v-card-text>
+                    <v-form ref="changePasswordForm">
+                        <v-container>
+                            <v-layout row justify-center>
+                                <v-flex xs3 style="margin:10px;">
+                                    <v-text-field v-model.trim="changePasswordDialog.oldPassword"
+                                                  label="current password"
+                                                  prepend-inner-icon="mdi-lock"
+                                                  filled
+                                                  type="password"
+                                                  :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
+                                    </v-text-field>
+                                </v-flex>
+                                <v-flex xs3 style="margin:10px;">
+                                    <v-text-field v-model.trim="changePasswordDialog.newPassword"
+                                                  label="new password"
+                                                  prepend-inner-icon="mdi-lock"
+                                                  filled
+                                                  type="password"
+                                                  :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required', v => (v && v.length >= 8) || 'The password must have at least eight characters']">
+                                    </v-text-field>
+                                </v-flex>
+                                <v-flex xs3 style="margin:10px;">
+                                    <v-text-field v-model.trim="changePasswordDialog.confirmedPassword"
+                                                  label="confirm new password"
+                                                  prepend-inner-icon="mdi-lock"
+                                                  filled
+                                                  type="password"
+                                                  :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required', changePasswordDialog.newPassword===changePasswordDialog.confirmedPassword || 'Passwords do not match']"></v-text-field>
+                                </v-flex>
+                            </v-layout>
+                            <v-layout row justify-center>
+                                <v-flex xs9 style="text-align:right;">
+                                    <v-btn small class="mx-1" color="primary" v-bind:disabled="pendingRequest" v-on:click.stop="changePassword()">ACCEPT</v-btn>
+                                    <v-btn small class="mx-1" color="primary" v-bind:disabled="pendingRequest" v-on:click.stop="closeChangePasswordDialog()">CANCEL</v-btn>
+                                </v-flex>
+                            </v-layout>
+                        </v-container>
+                        <v-divider></v-divider>
+                    </v-form>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
         <v-snackbars :objects.sync="messages" :timeout="40000" bottom right></v-snackbars>
-        <v-footer app><span>&nbsp;Software &nbsp;&copy;&nbsp;2020</span></v-footer>
+        <v-footer app>
+            <span>&nbsp;Software &nbsp;&copy;&nbsp;2020</span>
+        </v-footer>
     </v-app>
 </template>
 
 <script lang="ts">
     import HelloWorld from '@/components/HelloWorld.vue';
     import VSnackbars from "@/components/v-snackbars.vue";
+    import { AxiosResponse } from 'axios';
     import { Component, Vue, Watch } from 'vue-property-decorator';
+    import { Notify } from './common/notify';
+    import { UserService } from './services/user.service';
+    import { Utils } from './common/utils';
 
     @Component({
         components: { HelloWorld, VSnackbars },
@@ -89,6 +170,11 @@
         }
     })
     export default class App extends Vue {
+        private pendingRequest: boolean = false;
+        private utils: any = Utils;
+
+        private userService = new UserService();
+
         private clipped: boolean = true;
         private drawer: boolean = true;
         private miniVariant: boolean = true;
@@ -116,8 +202,47 @@
                 ],
             }
         ];
-
+        private changePasswordDialog: any = {
+            display: null,
+            oldPassword: null,
+            newPassword: null,
+            confirmedPassword: null
+        };
         private messages: Array<any> = [];
+
+        private closeChangePasswordDialog() {
+            var self = this;
+            self.changePasswordDialog.display = false;
+            var form = self.$refs.changePasswordForm as any;
+            form.reset();
+        }
+        private async changePassword() {
+            var self = this;
+            try {
+                var form = self.$refs.changePasswordForm as any;
+                if (!form.validate()) {
+                    return;
+                }
+
+                var bodyData = {
+                    oldPassword: Utils.tryGet(() => self.changePasswordDialog.oldPassword),
+                    newPassword: Utils.tryGet(() => self.changePasswordDialog.newPassword)
+                };
+
+                var response: AxiosResponse;
+                response = await self.userService.changePassword(bodyData);
+
+                var error = response?.data?.error;
+                if (error === false) {
+                    self.closeChangePasswordDialog();
+                }
+            }
+            catch (error) {
+                self.closeChangePasswordDialog();
+                Notify.pushErrorNotification('Error. The operation cannot be completed.');
+            }
+        }
+
         @Watch('$store.state.notifications', { immediate: true, deep: true })
         private async onNewNotification(value: any, oldValue: any) {
             var self = this;
@@ -138,8 +263,8 @@
         color: #616161 !important
     }
 
-    .v-snack__wrapper{
-        max-width:350px;
+    .v-snack__wrapper {
+        max-width: 350px;
     }
 
     input[disabled] {

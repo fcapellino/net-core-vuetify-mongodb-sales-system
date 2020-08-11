@@ -152,7 +152,7 @@
             totalItemCount: 0,
             itemsList: [],
             headers: [
-                { text: 'Actions', value: '[actions]', sortable: false },
+                { text: 'Actions', value: '[actions]', width:'10%', sortable: false },
                 { text: 'Id', value: '[id]', sortable: false },
                 { text: 'Name', value: '[name]', sortable: true },
                 { text: 'Description', value: '[description]', sortable: true },
@@ -242,15 +242,15 @@
 
                 var response: AxiosResponse;
                 if (!self.categoryDialog.data.id) {
-                    response = await this.categoryService.createCategory(bodyData);
+                    response = await self.categoryService.createCategory(bodyData);
                 }
                 else {
                     if (!self.categoryDialog.deletion) {
-                        response = await this.categoryService.updateCategory(bodyData);
+                        response = await self.categoryService.updateCategory(bodyData);
                     }
                     else {
                         var id = self.categoryDialog.data.id;
-                        response = await this.categoryService.deleteCategory(id);
+                        response = await self.categoryService.deleteCategory(id);
                     }
                 }
 
@@ -274,7 +274,7 @@
 
                 var id = options.category.id;
                 var response: AxiosResponse;
-                response = await this.categoryService.activateOrDeactivateCategory(id);
+                response = await self.categoryService.activateOrDeactivateCategory(id);
 
                 var error = response?.data?.error;
                 if (error === false) {
