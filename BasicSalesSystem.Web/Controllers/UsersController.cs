@@ -254,6 +254,16 @@
             throw new NotImplementedException();
         }
 
+        //                return await _cache.GetOrCreate($"puntosentrega:{pais}:{marca}".ToLower(), async entry =>
+        //        {
+        //    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1);
+        //    var puntosDeEntregaUrl = _configuration.GetSection($"RequestURLs:{pais}:PuntosDeEntrega").Value +
+        //        $"?sinCoordenadas=false&idMarca={marca.NullIfEmpty()}";
+
+        //    var puntosDeEntregaResponse = await _httpClientWrapper.GetStringAsync(puntosDeEntregaUrl);
+        //    return new SuccessResult(JsonConvert.DeserializeObject<dynamic>(puntosDeEntregaResponse));
+        //});
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);

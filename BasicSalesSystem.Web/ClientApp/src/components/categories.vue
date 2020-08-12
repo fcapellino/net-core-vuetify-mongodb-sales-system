@@ -60,10 +60,10 @@
                     <template v-slot:item.[id]="{ item }">
                         {{ getItemIndex(item) }}
                     </template>
-                    <template v-slot:item.[firstname]="{ item }">
+                    <template v-slot:item.[name]="{ item }">
                         {{ item.name }}
                     </template>
-                    <template v-slot:item.[lastname]="{ item }">
+                    <template v-slot:item.[description]="{ item }">
                         {{ item.description }}
                     </template>
                     <template v-slot:item.[active]="{ item }">
@@ -152,9 +152,9 @@
             totalItemCount: 0,
             itemsList: [],
             headers: [
-                { text: 'Actions', value: '[actions]', width:'10%', sortable: false },
+                { text: 'Actions', value: '[actions]', width: '10%', sortable: false },
                 { text: 'Id', value: '[id]', sortable: false },
-                { text: 'Name', value: '[name]', sortable: true },
+                { text: 'Name', value: '[name]', width: '15%', sortable: true },
                 { text: 'Description', value: '[description]', sortable: true },
                 { text: 'State', value: '[active]', sortable: true }
             ]

@@ -28,30 +28,6 @@
 
         [HttpGet]
         //[Authorization(UserRoles.Administrator)]
-        public async Task<IActionResult> GetCategory(String id)
-        {
-            var filter = Builders<Category>.Filter.Where(x => x.Id.Equals(id));
-            var category = await _mongoDbService.GetCollection<Category>(Collections.Categories)
-                .Find(filter).FirstOrDefaultAsync();
-
-            if (category == null)
-            {
-                throw new CustomException("Invalid category specified.");
-            }
-
-            var item = new
-            {
-                category.Id,
-                category.Name,
-                category.Description,
-                category.Active,
-            };
-
-            return new SuccessResult(item);
-        }
-
-        [HttpGet]
-        //[Authorization(UserRoles.Administrator)]
         public async Task<IActionResult> GetCategoriesList(GetCategoriesListRequest request)
         {
             var query = _mongoDbService.GetCollection<Category>(Collections.Categories);
@@ -81,6 +57,33 @@
                                 item.Name,
                                 item.Description,
                                 item.Active
+                            })
+                            .ToList()
+            };
+
+            return new SuccessResult(resources);
+        }
+
+        [HttpGet]
+        //[Authorization(UserRoles.Administrator)]
+        public async Task<IActionResult> GetCompleteCategoriesList()
+        {
+            var query = _mongoDbService.GetCollection<Category>(Collections.Categories);
+            var filter = new FilterDefinitionBuilder<Category>().Empty;
+            var findOptions = new FindOptions() { Collation = new Collation("en") };
+
+            var items = await query.Find(filter, findOptions)
+                    .ApplyOrdering(nameof(Category.Name), descending: false)
+                    .ToListAsync();
+
+            var resources = new ListResource()
+            {
+                ItemsList = items
+                            .Select(item => new
+                            {
+                                item.Id,
+                                item.Name,
+                                item.Description
                             })
                             .ToList()
             };
@@ -164,19 +167,28 @@
         //[Authorization(UserRoles.Administrator)]
         public async Task<IActionResult> DeleteCategory(String id)
         {
-            var filter = Builders<Category>.Filter.Where(x => x.Id.Equals(id));
+            var categoryFilter = Builders<Category>.Filter.Where(x => x.Id.Equals(id));
             var category = await _mongoDbService.GetCollection<Category>(Collections.Categories)
-                .Find(filter).FirstOrDefaultAsync();
+                .Find(categoryFilter).FirstOrDefaultAsync();
 
             if (category == null)
             {
                 throw new CustomException("Invalid category specified.");
             }
 
+            var productFilter = Builders<Product>.Filter.Where(x => x.CategoryId.Equals(id));
+            var hasProducts = await _mongoDbService.GetCollection<Product>(Collections.Products)
+                .Find(productFilter).AnyAsync();
+
+            if (hasProducts)
+            {
+                throw new CustomException("There are products assigned to this category.");
+            }
+
             var session = await _mongoDbService.GetSessionAsync();
             await _mongoDbService.StartTransactionAsync();
             await _mongoDbService.GetCollection<Category>(Collections.Categories)
-                .DeleteOneAsync(session, filter);
+                .DeleteOneAsync(session, categoryFilter);
 
             await _mongoDbService.CommitTransactionAsync();
             return new SuccessResult();

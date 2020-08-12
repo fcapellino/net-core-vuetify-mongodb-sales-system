@@ -8,6 +8,9 @@
 
     public static class Collections
     {
-        public const string Categories = "Categories";
+        public const string Users = "users";
+        public const string Roles = "roles";
+        public const string Categories = "categories";
+        public const string Products = "products ";
     }
 }

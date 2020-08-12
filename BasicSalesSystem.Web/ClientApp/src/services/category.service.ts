@@ -1,42 +1,47 @@
-import axios from "axios";
+import { AxiosStatic } from "axios";
 
 export class CategoryService {
+    private axios: AxiosStatic = (<any>window).axios;
     constructor() {
     }
 
-    getCategory(id: any) {
-        return axios
-            .get('/api/categories/getcategory', {
-                params: { id }
-            })
-    }
-
     getCategoriesList(params: any) {
-        return axios
+        var self = this;
+        return self.axios
             .get('/api/categories/getcategorieslist', {
                 params
             })
     }
 
+    getCompleteCategoriesList() {
+        var self = this;
+        return self.axios
+            .get('/api/categories/getcompletecategorieslist', {})
+    }
+
     createCategory(body: any) {
-        return axios
+        var self = this;
+        return self.axios
             .post('/api/categories/createcategory', body)
     }
 
     updateCategory(body: any) {
-        return axios
+        var self = this;
+        return self.axios
             .post('/api/categories/updatecategory', body)
     }
 
     activateOrDeactivateCategory(id: any) {
-        return axios
+        var self = this;
+        return self.axios
             .post('/api/categories/activateordeactivatecategory', {}, {
                 params: { id }
             })
     }
 
     deleteCategory(id: any) {
-        return axios
+        var self = this;
+        return self.axios
             .post('/api/categories/deletecategory', {}, {
                 params: { id }
             })

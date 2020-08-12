@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import CategoriesCompoennt from './components/categories.vue';
+import CategoriesComponent from './components/categories.vue';
+import ProductsComponent from './components/products.vue';
 import Home from './views/Home.vue';
 
 Vue.use(Router);
@@ -17,7 +18,12 @@ export default new Router({
         {
             path: '/categories',
             name: 'categories',
-            component: CategoriesCompoennt
+            component: CategoriesComponent
+        },
+        {
+            path: '/products',
+            name: 'products',
+            component: ProductsComponent
         }
         //{
         //    path: '/counter',

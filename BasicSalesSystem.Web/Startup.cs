@@ -5,6 +5,7 @@ namespace BasicSalesSystem.Web
     using AspNetCore.Identity.Mongo;
     using BasicSalesSystem.Domain.Entities;
     using Custom;
+    using Custom.Enumerations;
     using Dependencies.EmailService;
     using Dependencies.MongoDbService;
     using FluentValidation.AspNetCore;
@@ -89,6 +90,8 @@ namespace BasicSalesSystem.Web
                 }, mongoIdentityOptions =>
                 {
                     mongoIdentityOptions.ConnectionString = _configuration.GetConnectionString("DefaultConnection");
+                    mongoIdentityOptions.UsersCollection = Collections.Users;
+                    mongoIdentityOptions.RolesCollection = Collections.Roles;
                 })
                 .AddDefaultTokenProviders();
             #endregion
