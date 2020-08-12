@@ -78,7 +78,7 @@
                     <template v-slot:item.[product.description]="{ item }">
                         {{ item.description }}
                     </template>
-                    <template v-slot:item.[product.category]="{ item }">
+                    <template v-slot:item.[product.categoryid]="{ item }">
                         {{ item.category.name }}
                     </template>
                     <template v-slot:item.[product.stock]="{ item }">
@@ -231,7 +231,7 @@
                 { text: 'BarCode', value: '[product.barcode]', sortable: true },
                 { text: 'Name', value: '[product.name]', width: '15%', sortable: true },
                 { text: 'Description', value: '[product.description]', sortable: true },
-                { text: 'Category', value: '[product.category]', width: '15%', sortable: false },
+                { text: 'Category', value: '[product.categoryid]', width: '15%', sortable: true },
                 { text: 'Stock', value: '[product.stock]', width: '100px', sortable: true },
                 { text: 'Unit price', value: '[product.unitprice]', width: '110px', sortable: true },
                 { text: 'State', value: '[product.active]', width: '80px', sortable: true }
