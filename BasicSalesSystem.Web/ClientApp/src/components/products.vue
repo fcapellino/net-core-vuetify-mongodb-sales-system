@@ -82,7 +82,7 @@
                         {{ item.category.name }}
                     </template>
                     <template v-slot:item.[product.stock]="{ item }">
-                        {{ item.stock }}
+                        {{ item.stock.toString().padStart(3, '0') }}
                     </template>
                     <template v-slot:item.[product.unitprice]="{ item }">
                         {{ '$'+item.unitPrice.toFixed(2).toString() }}
@@ -95,7 +95,7 @@
                 </v-data-table>
             </v-card>
         </v-col>
-        <v-dialog v-model="productDialog.show" persistent max-width="500px">
+        <v-dialog v-model="productDialog.show" persistent max-width="580px">
             <v-card>
                 <v-card-title>
                     <span v-if="!productDialog.data.id" class="headline">New product</span>
@@ -110,36 +110,75 @@
                                 <v-col cols="12" xs="12">
                                     <v-text-field v-model="productDialog.data.id"
                                                   label="Id"
+                                                  dense
                                                   disabled
                                                   style="display:none;">
                                     </v-text-field>
                                 </v-col>
-                                <v-col cols="6" xs="6">
+                                <v-col cols="12" xs="12">
+                                    <v-text-field v-model.trim="productDialog.data.name"
+                                                  label="Name"
+                                                  dense
+                                                  :disabled="productDialog.readonly"
+                                                  :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="12" xs="12">
+                                    <v-textarea v-model.trim="productDialog.data.description"
+                                                label="Description"
+                                                dense
+                                                :rows="4"
+                                                :disabled="productDialog.readonly"
+                                                :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
+                                    </v-textarea>
+                                </v-col>
+                                <v-col cols="12" xs="12">
                                     <v-select v-model="productDialog.data.category"
                                               :items="categoriesList"
                                               item-value="id"
                                               item-text="name"
                                               label="Category"
+                                              dense
                                               :disabled="productDialog.readonly"
                                               :rules="[v => v!=null || 'This field is required']"
                                               return-object>
                                     </v-select>
                                 </v-col>
-                                <!--<v-col cols="12" xs="12">
-                                    <v-text-field v-model.trim="categoryDialog.data.name"
-                                                  label="Name"
-                                                  :disabled="categoryDialog.readonly"
+                                <v-col cols="4" xs="4">
+                                    <v-text-field v-model.trim="productDialog.data.barCode"
+                                                  label="Barcode"
+                                                  dense
+                                                  :readonly="true"
+                                                  :disabled="productDialog.readonly"
                                                   :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
+                                        <template slot="append">
+                                            <v-tooltip bottom>
+                                                <template v-slot:activator="{ on, attrs }">
+                                                    <v-icon v-on="on" v-on:click="generateBarCode()">
+                                                        cached
+                                                    </v-icon>
+                                                </template>
+                                                <span>Generate</span>
+                                            </v-tooltip>
+                                        </template>
                                     </v-text-field>
                                 </v-col>
-                                <v-col cols="12" xs="12">
-                                    <v-textarea v-model.trim="categoryDialog.data.description"
-                                                label="Description"
-                                                :rows="4"
-                                                :disabled="categoryDialog.readonly"
-                                                :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
-                                    </v-textarea>
-                                </v-col>-->
+                                <v-col cols="4" xs="4">
+                                    <v-text-field v-model.number="productDialog.data.stock"
+                                                  label="Stock"
+                                                  dense
+                                                  :disabled="productDialog.readonly"
+                                                  :rules="[v => (!!v && Number(v)>0 && Number.isInteger(v)) || 'This field is required']">
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="4" xs="4">
+                                    <v-text-field v-model.number="productDialog.data.unitPrice"
+                                                  label="Unit price"
+                                                  dense
+                                                  :disabled="productDialog.readonly"
+                                                  :rules="[v => (!!v && Number(v)>0) || 'This field is required']">
+                                    </v-text-field>
+                                </v-col>
                             </v-layout>
                         </v-container>
                     </v-form>
@@ -187,15 +226,15 @@
             totalItemCount: 0,
             itemsList: [],
             headers: [
-                { text: 'Actions', value: '[actions]', width: '10%', sortable: false },
-                { text: 'Id', value: '[id]', sortable: false },
+                { text: 'Actions', value: '[actions]', width: '110px', sortable: false },
+                { text: 'Id', value: '[id]', width: '70px', sortable: false },
                 { text: 'BarCode', value: '[product.barcode]', sortable: true },
                 { text: 'Name', value: '[product.name]', width: '15%', sortable: true },
                 { text: 'Description', value: '[product.description]', sortable: true },
-                { text: 'Category', value: '[product.category]', sortable: false },
-                { text: 'Stock', value: '[product.stock]', sortable: true },
-                { text: 'Unit price', value: '[product.unitprice]', sortable: true },
-                { text: 'State', value: '[product.active]', sortable: true }
+                { text: 'Category', value: '[product.category]', width: '15%', sortable: false },
+                { text: 'Stock', value: '[product.stock]', width: '100px', sortable: true },
+                { text: 'Unit price', value: '[product.unitprice]', width: '110px', sortable: true },
+                { text: 'State', value: '[product.active]', width: '80px', sortable: true }
             ]
         };
         private productDialog: any = {
@@ -212,7 +251,7 @@
                 unitPrice: null
             }
         };
-        private categoriesList = [];
+        private categoriesList: Array<any> = [];
 
         private async mounted() {
             var self = this;
@@ -285,43 +324,54 @@
             var form = self.$refs.productDataForm as any;
             form.reset();
         }
+        private generateBarCode() {
+            var self = this;
+            self.productDialog.data.barCode = Math.random().toString().slice(2, 15);
+        }
         private async executeProductDialogRequest() {
             var self = this;
             try {
-                var form = self.$refs.categoryDataForm as any;
+                self.pendingRequest = true;
+                var form = self.$refs.productDataForm as any;
                 if (!form.validate()) {
                     return;
                 }
 
-                //var bodyData = {
-                //    id: Utils.tryGet(() => self.categoryDialog.data.id),
-                //    name: Utils.tryGet(() => self.categoryDialog.data.name),
-                //    description: Utils.tryGet(() => self.categoryDialog.data.description)
-                //};
+                var bodyData = {
+                    id: Utils.tryGet(() => self.productDialog.data.id),
+                    categoryId: Utils.tryGet(() => self.productDialog.data.category.id),
+                    barCode: Utils.tryGet(() => self.productDialog.data.barCode),
+                    name: Utils.tryGet(() => self.productDialog.data.name),
+                    description: Utils.tryGet(() => self.productDialog.data.description),
+                    stock: Utils.tryGet(() => self.productDialog.data.stock),
+                    unitPrice: Utils.tryGet(() => self.productDialog.data.unitPrice)
+                };
 
-                //var response: AxiosResponse;
-                //if (!self.categoryDialog.data.id) {
-                //    response = await self.categoryService.createCategory(bodyData);
-                //}
-                //else {
-                //    if (!self.categoryDialog.deletion) {
-                //        response = await self.categoryService.updateCategory(bodyData);
-                //    }
-                //    else {
-                //        var id = self.categoryDialog.data.id;
-                //        response = await self.categoryService.deleteCategory(id);
-                //    }
-                //}
+                var response: AxiosResponse;
+                if (!self.productDialog.data.id) {
+                    response = await self.productService.createProduct(bodyData);
+                }
+                else {
+                    if (!self.productDialog.deletion) {
+                        response = await self.productService.updateProduct(bodyData);
+                    }
+                    else {
+                        var id = self.productDialog.data.id;
+                        response = await self.productService.deleteProduct(id);
+                    }
+                }
 
-                //var error = response?.data?.error;
-                //if (error === false) {
-                //    self.closeCategoryDialog();
-                //    await self.getCategoriesList();
-                //}
+                var error = response?.data?.error;
+                if (error === false) {
+                    self.closeProductDialog();
+                    await self.getProductsList();
+                }
             }
             catch (error) {
-                self.closeProductDialog();
                 Notify.pushErrorNotification('Error. The operation cannot be completed.');
+            }
+            finally {
+                self.pendingRequest = false;
             }
         }
         private async activateOrDeactivateProduct(options) {

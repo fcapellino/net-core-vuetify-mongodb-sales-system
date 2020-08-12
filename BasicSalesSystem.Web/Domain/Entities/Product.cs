@@ -26,6 +26,7 @@
         public int Stock { get; set; }
 
         [BsonRequired]
+        [BsonRepresentation(BsonType.Decimal128)]
         public decimal UnitPrice { get; set; }
 
         [BsonRequired]

@@ -148,7 +148,7 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
-        <v-snackbars :objects.sync="messages" :timeout="40000" bottom right></v-snackbars>
+        <v-snackbars :objects.sync="messages" :timeout="3000" bottom right></v-snackbars>
         <v-footer app>
             <span>&nbsp;Software &nbsp;&copy;&nbsp;2020</span>
         </v-footer>

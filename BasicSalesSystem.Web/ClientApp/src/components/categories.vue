@@ -89,6 +89,7 @@
                                 <v-col cols="12" xs="12">
                                     <v-text-field v-model="categoryDialog.data.id"
                                                   label="Id"
+                                                  dense
                                                   disabled
                                                   style="display:none;">
                                     </v-text-field>
@@ -96,6 +97,7 @@
                                 <v-col cols="12" xs="12">
                                     <v-text-field v-model.trim="categoryDialog.data.name"
                                                   label="Name"
+                                                  dense
                                                   :disabled="categoryDialog.readonly"
                                                   :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
                                     </v-text-field>
@@ -103,6 +105,7 @@
                                 <v-col cols="12" xs="12">
                                     <v-textarea v-model.trim="categoryDialog.data.description"
                                                 label="Description"
+                                                dense
                                                 :rows="4"
                                                 :disabled="categoryDialog.readonly"
                                                 :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
@@ -152,11 +155,11 @@
             totalItemCount: 0,
             itemsList: [],
             headers: [
-                { text: 'Actions', value: '[actions]', width: '10%', sortable: false },
-                { text: 'Id', value: '[id]', sortable: false },
+                { text: 'Actions', value: '[actions]', width: '110px', sortable: false },
+                { text: 'Id', value: '[id]', width: '70px', sortable: false },
                 { text: 'Name', value: '[name]', width: '15%', sortable: true },
                 { text: 'Description', value: '[description]', sortable: true },
-                { text: 'State', value: '[active]', sortable: true }
+                { text: 'State', value: '[active]', width: '80px', sortable: true }
             ]
         };
         private categoryDialog: any = {
@@ -229,6 +232,7 @@
         private async executeCategoryDialogRequest() {
             var self = this;
             try {
+                self.pendingRequest = true;
                 var form = self.$refs.categoryDataForm as any;
                 if (!form.validate()) {
                     return;
@@ -261,8 +265,10 @@
                 }
             }
             catch (error) {
-                self.closeCategoryDialog();
                 Notify.pushErrorNotification('Error. The operation cannot be completed.');
+            }
+            finally {
+                self.pendingRequest = false;
             }
         }
         private async activateOrDeactivateCategory(options) {
