@@ -212,7 +212,7 @@
                 unitPrice: null
             }
         };
-        private categoriesList: [];
+        private categoriesList = [];
 
         private async mounted() {
             var self = this;
