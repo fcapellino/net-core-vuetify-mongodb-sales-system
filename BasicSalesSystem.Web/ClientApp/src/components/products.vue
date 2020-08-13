@@ -74,7 +74,7 @@
                     </template>
                     <template v-slot:item.[product.description]="{ item }">
                         <p style="margin:0px;">{{ item.description }}</p>
-                        <small>{{ item.code }}</small>
+                        <small style="font-size:70%;">{{ item.code }}</small>
                     </template>
                     <template v-slot:item.[product.categoryid]="{ item }">
                         {{ item.category.name }}
