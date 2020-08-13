@@ -46,6 +46,7 @@
             if (!string.IsNullOrWhiteSpace(request.SearchQuery))
             {
                 query = query.Where(x => x.Product.Name.ToLower().Contains(request.SearchQuery.ToLower().Trim()) ||
+                                         x.Product.Code.ToLower().Contains(request.SearchQuery.ToLower().Trim()) ||
                                          x.Product.Description.ToLower().Contains(request.SearchQuery.ToLower().Trim()));
             }
 

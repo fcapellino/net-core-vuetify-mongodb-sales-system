@@ -70,11 +70,11 @@
                         {{ getItemIndex(item) }}
                     </template>
                     <template v-slot:item.[product.name]="{ item }">
-                        <p style="margin:0px;">{{ item.name }}</p>
-                        <small>{{ item.code }}</small>
+                        {{ item.name }}
                     </template>
                     <template v-slot:item.[product.description]="{ item }">
-                        {{ item.description }}
+                        <p style="margin:0px;">{{ item.description }}</p>
+                        <small>{{ item.code }}</small>
                     </template>
                     <template v-slot:item.[product.categoryid]="{ item }">
                         {{ item.category.name }}
