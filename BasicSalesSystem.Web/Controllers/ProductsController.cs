@@ -89,6 +89,15 @@
         //[Authorization(UserRoles.Administrator)]
         public async Task<IActionResult> CreateProduct([FromBody] CreateUpdateProductRequest request)
         {
+            var categoryFilter = Builders<Category>.Filter.Where(x => x.Id.Equals(request.CategoryId));
+            var category = await _mongoDbService.GetCollection<Category>(Collections.Categories)
+                .Find(categoryFilter).FirstOrDefaultAsync();
+
+            if (category == null)
+            {
+                throw new CustomException("Invalid category specified.");
+            }
+
             var session = await _mongoDbService.GetSessionAsync();
             await _mongoDbService.StartTransactionAsync();
 
@@ -112,13 +121,22 @@
         //[Authorization(UserRoles.Administrator)]
         public async Task<IActionResult> UpdateProduct([FromBody] CreateUpdateProductRequest request)
         {
-            var filter = Builders<Product>.Filter.Where(x => x.Id.Equals(request.Id));
+            var productFilter = Builders<Product>.Filter.Where(x => x.Id.Equals(request.Id));
             var product = await _mongoDbService.GetCollection<Product>(Collections.Products)
-                .Find(filter).FirstOrDefaultAsync();
+                .Find(productFilter).FirstOrDefaultAsync();
 
             if (product == null)
             {
                 throw new CustomException("Invalid product specified.");
+            }
+
+            var categoryFilter = Builders<Category>.Filter.Where(x => x.Id.Equals(request.CategoryId));
+            var category = await _mongoDbService.GetCollection<Category>(Collections.Categories)
+                .Find(categoryFilter).FirstOrDefaultAsync();
+
+            if (category == null)
+            {
+                throw new CustomException("Invalid category specified.");
             }
 
             var session = await _mongoDbService.GetSessionAsync();
@@ -133,7 +151,7 @@
                 .Set(x => x.UnitPrice, request.UnitPrice);
 
             await _mongoDbService.GetCollection<Product>(Collections.Products)
-                 .UpdateOneAsync(session, filter, updateDefinition);
+                 .UpdateOneAsync(session, productFilter, updateDefinition);
 
             await _mongoDbService.CommitTransactionAsync();
             return new SuccessResult();
