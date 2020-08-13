@@ -141,7 +141,7 @@
                                                   :disabled="productDialog.readonly"
                                                   :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
                                         <template slot="append">
-                                            <v-tooltip bottom>
+                                            <v-tooltip bottom v-if="!productDialog.readonly">
                                                 <template v-slot:activator="{ on, attrs }">
                                                     <v-icon v-on="on" v-on:click="generateProductCode()">
                                                         cached
