@@ -12,7 +12,7 @@
         public string Address { get; set; }
 
         [BsonRequired]
-        public int DocumentType { get; set; }
+        public string DocumentType { get; set; }
 
         [BsonRequired]
         public int DocumentNumber { get; set; }

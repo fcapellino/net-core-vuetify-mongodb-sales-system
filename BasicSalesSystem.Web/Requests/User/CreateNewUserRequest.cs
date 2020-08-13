@@ -1,13 +1,15 @@
 ﻿namespace BasicSalesSystem.Web.Requests.User
 {
     using System.Linq;
-    using FluentValidation;
     using BasicSalesSystem.Web.Custom.Enumerations;
+    using FluentValidation;
 
     public class CreateNewUserRequest
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string FullName { get; set; }
+        public string Address { get; set; }
+        public string DocumentType { get; set; }
+        public int DocumentNumber { get; set; }
         public string Email { get; set; }
         public string Role { get; set; }
     }
@@ -17,13 +19,23 @@
     {
         public CreateNewUserRequestValidator()
         {
-            RuleFor(x => x.FirstName)
+            RuleFor(x => x.FullName)
                 .NotEmpty()
-                .MaximumLength(30);
+                .MaximumLength(40);
 
-            RuleFor(x => x.LastName)
+            RuleFor(x => x.Address)
                 .NotEmpty()
-                .MaximumLength(30);
+                .MaximumLength(50);
+
+            RuleFor(x => x.DocumentType)
+                .NotEmpty()
+                .Must(x =>
+                {
+                    return new[] { DocumentTypes.CI, DocumentTypes.DNI, DocumentTypes.LC, DocumentTypes.LE }.Contains(x.ToLower());
+                });
+
+            RuleFor(x => x.DocumentNumber)
+                .GreaterThan(0);
 
             RuleFor(x => x.Email)
                 .NotEmpty()
@@ -33,7 +45,7 @@
                 .NotEmpty()
                 .Must(x =>
                 {
-                    return new[] { UserRoles.Administrator, UserRoles.Regular }.Contains(x.ToLower());
+                    return new[] { UserRoles.Administrator, UserRoles.Salesman, UserRoles.Storekeeper }.Contains(x.ToLower());
                 });
         }
     }
