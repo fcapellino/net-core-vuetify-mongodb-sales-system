@@ -70,7 +70,7 @@
                                 category.Id,
                                 category.Name
                             },
-                            item.Product.BarCode,
+                            item.Product.Code,
                             item.Product.Name,
                             item.Product.Description,
                             item.Product.Stock,
@@ -94,7 +94,7 @@
             var newProduct = new Product()
             {
                 CategoryId = request.CategoryId.Trim(),
-                BarCode = request.BarCode.Trim(),
+                Code = request.Code.Trim(),
                 Name = request.Name.Trim(),
                 Description = request.Description.Trim(),
                 Stock = request.Stock,
@@ -125,7 +125,7 @@
 
             var updateDefinition = new UpdateDefinitionBuilder<Product>()
                 .Set(x => x.CategoryId, request.CategoryId.Trim())
-                .Set(x => x.BarCode, request.BarCode.Trim())
+                .Set(x => x.Code, request.Code.Trim())
                 .Set(x => x.Name, request.Name.Trim())
                 .Set(x => x.Description, request.Description.Trim())
                 .Set(x => x.Stock, request.Stock)

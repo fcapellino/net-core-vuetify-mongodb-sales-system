@@ -295,6 +295,7 @@
         @Watch('categoriesTable.filters', { immediate: true, deep: true })
         private async onFiltersChanged(value: any, oldValue: any) {
             var self = this;
+            self.categoriesTable.options.page = 1;
             await self.getCategoriesList();
         }
 

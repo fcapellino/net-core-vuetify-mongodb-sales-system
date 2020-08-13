@@ -69,11 +69,9 @@
                     <template v-slot:item.[id]="{ item }">
                         {{ getItemIndex(item) }}
                     </template>
-                    <template v-slot:item.[product.barcode]="{ item }">
-                        {{ item.barCode }}
-                    </template>
                     <template v-slot:item.[product.name]="{ item }">
-                        {{ item.name }}
+                        <p style="margin:0px;">{{ item.name }}</p>
+                        <small>{{ item.code }}</small>
                     </template>
                     <template v-slot:item.[product.description]="{ item }">
                         {{ item.description }}
@@ -124,15 +122,6 @@
                                     </v-text-field>
                                 </v-col>
                                 <v-col cols="12" xs="12">
-                                    <v-textarea v-model.trim="productDialog.data.description"
-                                                label="Description"
-                                                dense
-                                                :rows="4"
-                                                :disabled="productDialog.readonly"
-                                                :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
-                                    </v-textarea>
-                                </v-col>
-                                <v-col cols="12" xs="12">
                                     <v-select v-model="productDialog.data.category"
                                               :items="categoriesList"
                                               item-value="id"
@@ -145,8 +134,8 @@
                                     </v-select>
                                 </v-col>
                                 <v-col cols="4" xs="4">
-                                    <v-text-field v-model.trim="productDialog.data.barCode"
-                                                  label="Barcode"
+                                    <v-text-field v-model.trim="productDialog.data.code"
+                                                  label="Code"
                                                   dense
                                                   :readonly="true"
                                                   :disabled="productDialog.readonly"
@@ -154,7 +143,7 @@
                                         <template slot="append">
                                             <v-tooltip bottom>
                                                 <template v-slot:activator="{ on, attrs }">
-                                                    <v-icon v-on="on" v-on:click="generateBarCode()">
+                                                    <v-icon v-on="on" v-on:click="generateProductCode()">
                                                         cached
                                                     </v-icon>
                                                 </template>
@@ -178,6 +167,15 @@
                                                   :disabled="productDialog.readonly"
                                                   :rules="[v => (!!v && Number(v)>0) || 'This field is required']">
                                     </v-text-field>
+                                </v-col>
+                                <v-col cols="12" xs="12">
+                                    <v-textarea v-model.trim="productDialog.data.description"
+                                                label="Description"
+                                                dense
+                                                :rows="4"
+                                                :disabled="productDialog.readonly"
+                                                :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
+                                    </v-textarea>
                                 </v-col>
                             </v-layout>
                         </v-container>
@@ -228,7 +226,6 @@
             headers: [
                 { text: 'Actions', value: '[actions]', width: '110px', sortable: false },
                 { text: 'Id', value: '[id]', width: '70px', sortable: false },
-                { text: 'BarCode', value: '[product.barcode]', sortable: true },
                 { text: 'Name', value: '[product.name]', width: '15%', sortable: true },
                 { text: 'Description', value: '[product.description]', sortable: true },
                 { text: 'Category', value: '[product.categoryid]', width: '15%', sortable: true },
@@ -244,7 +241,7 @@
             data: {
                 id: null,
                 category: null,
-                barCode: null,
+                code: null,
                 name: null,
                 description: null,
                 stock: null,
@@ -303,7 +300,7 @@
             if (options?.product) {
                 self.productDialog.data.id = options.product.id;
                 self.productDialog.data.category = self.categoriesList.find(x => x.id === options.product.category.id);
-                self.productDialog.data.barCode = options.product.barCode;
+                self.productDialog.data.code = options.product.code;
                 self.productDialog.data.name = options.product.name;
                 self.productDialog.data.description = options.product.description;
                 self.productDialog.data.stock = options.product.stock;
@@ -324,9 +321,9 @@
             var form = self.$refs.productDataForm as any;
             form.reset();
         }
-        private generateBarCode() {
+        private generateProductCode() {
             var self = this;
-            self.productDialog.data.barCode = Math.random().toString().slice(2, 15);
+            self.productDialog.data.code = Math.random().toString().slice(2, 15);
         }
         private async executeProductDialogRequest() {
             var self = this;
@@ -340,7 +337,7 @@
                 var bodyData = {
                     id: Utils.tryGet(() => self.productDialog.data.id),
                     categoryId: Utils.tryGet(() => self.productDialog.data.category.id),
-                    barCode: Utils.tryGet(() => self.productDialog.data.barCode),
+                    code: Utils.tryGet(() => self.productDialog.data.code),
                     name: Utils.tryGet(() => self.productDialog.data.name),
                     description: Utils.tryGet(() => self.productDialog.data.description),
                     stock: Utils.tryGet(() => self.productDialog.data.stock),
@@ -398,6 +395,7 @@
         @Watch('productsTable.filters', { immediate: true, deep: true })
         private async onFiltersChanged(value: any, oldValue: any) {
             var self = this;
+            self.productsTable.options.page = 1;
             await self.getProductsList();
         }
 

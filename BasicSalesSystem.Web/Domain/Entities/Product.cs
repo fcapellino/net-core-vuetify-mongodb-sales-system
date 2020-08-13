@@ -14,7 +14,7 @@
         public string CategoryId { get; set; }
 
         [BsonRequired]
-        public string BarCode { get; set; }
+        public string Code { get; set; }
 
         [BsonRequired]
         public string Name { get; set; }
