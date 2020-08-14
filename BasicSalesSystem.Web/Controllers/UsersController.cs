@@ -120,7 +120,8 @@
                             {
                                 item.Id,
                                 item.Name,
-                                item.Description
+                                item.Description,
+                                item.Active
                             })
                             .ToList()
             };

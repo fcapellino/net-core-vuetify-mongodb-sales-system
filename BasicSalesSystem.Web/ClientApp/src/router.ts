@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import CategoriesComponent from './components/categories.vue';
 import ProductsComponent from './components/products.vue';
+import RolesComponent from './components/roles.vue';
 import Home from './views/Home.vue';
 
 Vue.use(Router);
@@ -24,6 +25,11 @@ export default new Router({
             path: '/products',
             name: 'products',
             component: ProductsComponent
+        },
+        {
+            path: '/roles',
+            name: 'roles',
+            component: RolesComponent
         }
         //{
         //    path: '/counter',

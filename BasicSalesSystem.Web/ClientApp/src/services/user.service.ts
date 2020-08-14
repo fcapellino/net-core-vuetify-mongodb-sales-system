@@ -1,40 +1,47 @@
-import axios from "axios";
+import { AxiosStatic } from "axios";
 
 export class UserService {
+    private axios: AxiosStatic = (<any>window).axios;
     constructor() {
     }
 
     getUsersList(params: any) {
-        return axios
+        var self = this;
+        return self.axios
             .get('/api/users/getuserslist', {
                 params
             })
     }
 
     getUsersRoleList() {
-        return axios
+        var self = this;
+        return self.axios
             .get('/api/users/getusersrolelist')
     }
 
     createUser(body: any) {
-        return axios
+        var self = this;
+        return self.axios
             .post('/api/users/createuser', body)
     }
 
     deleteUser(id: any) {
-        return axios
+        var self = this;
+        return self.axios
             .post('/api/users/deleteuser', {}, {
                 params: { id }
             })
     }
 
     changePassword(body: any) {
-        return axios
+        var self = this;
+        return self.axios
             .post('/api/users/changepassword', body)
     }
 
     generateJSONWebToken(body: any) {
-        return axios
+        var self = this;
+        return self.axios
             .post('/api/users/generatejsonwebtoken', body)
     }
 }
