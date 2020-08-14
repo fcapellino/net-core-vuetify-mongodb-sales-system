@@ -13,6 +13,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.DependencyInjection;
     using MongoDB.Driver;
+    using MongoDB.Driver.Linq;
 
     //[Authorize]
     [AllowAnonymous]
@@ -30,35 +31,32 @@
         //[Authorization(UserRoles.Administrator)]
         public async Task<IActionResult> GetCategoriesList(GetCategoriesListRequest request)
         {
-            var query = _mongoDbService.GetCollection<Category>(Collections.Categories);
-            var filter = new FilterDefinitionBuilder<Category>().Empty;
-            var findOptions = new FindOptions() { Collation = new Collation("en") };
+            var query = _mongoDbService.GetCollection<Category>(Collections.Categories).AsQueryable();
 
-            if (!string.IsNullOrEmpty(request.SearchQuery))
+            if (!string.IsNullOrWhiteSpace(request.SearchQuery))
             {
-                filter &= Builders<Category>.Filter.Or(
-                    Builders<Category>.Filter.Where(x => x.Name.ToLower().Contains(request.SearchQuery.ToLower().Trim())),
-                    Builders<Category>.Filter.Where(x => x.Description.ToLower().Contains(request.SearchQuery.ToLower().Trim())));
+                query = query.Where(x => x.Name.ToLower().Contains(request.SearchQuery.ToLower().Trim()) ||
+                                         x.Description.ToLower().Contains(request.SearchQuery.ToLower().Trim()));
             }
 
-            var totalItemCount = await query.Find(filter).CountDocumentsAsync();
-            var items = await query.Find(filter, findOptions)
-                    .ApplyOrdering(request.SortBy, request.SortDesc)
-                    .ApplyPaging(request.Page, request.PageSize)
-                    .ToListAsync();
+            var totalItemCount = await query.CountAsync();
+            var items = await query
+                .ApplyOrdering(request.SortBy, request.SortDesc)
+                .ApplyPaging(request.Page, request.PageSize)
+                .ToListAsync();
 
             var resources = new PagedListResource()
             {
                 TotalItemCount = totalItemCount,
                 ItemsList = items
-                            .Select(item => new
-                            {
-                                item.Id,
-                                item.Name,
-                                item.Description,
-                                item.Active
-                            })
-                            .ToList()
+                    .Select(item => new
+                    {
+                        item.Id,
+                        item.Name,
+                        item.Description,
+                        item.Active
+                    })
+                    .ToList()
             };
 
             return new SuccessResult(resources);
@@ -68,24 +66,21 @@
         //[Authorization(UserRoles.Administrator)]
         public async Task<IActionResult> GetCompleteCategoriesList()
         {
-            var query = _mongoDbService.GetCollection<Category>(Collections.Categories);
-            var filter = new FilterDefinitionBuilder<Category>().Empty;
-            var findOptions = new FindOptions() { Collation = new Collation("en") };
-
-            var items = await query.Find(filter, findOptions)
-                    .ApplyOrdering(nameof(Category.Name), descending: false)
-                    .ToListAsync();
+            var query = _mongoDbService.GetCollection<Category>(Collections.Categories).AsQueryable();
+            var items = await query
+                .ApplyOrdering(nameof(Category.Name), descending: false)
+                .ToListAsync();
 
             var resources = new ListResource()
             {
                 ItemsList = items
-                            .Select(item => new
-                            {
-                                item.Id,
-                                item.Name,
-                                item.Description
-                            })
-                            .ToList()
+                    .Select(item => new
+                    {
+                        item.Id,
+                        item.Name,
+                        item.Description
+                    })
+                    .ToList()
             };
 
             return new SuccessResult(resources);

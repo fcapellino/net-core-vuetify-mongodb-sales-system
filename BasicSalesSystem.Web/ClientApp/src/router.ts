@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import CategoriesComponent from './components/categories.vue';
 import ProductsComponent from './components/products.vue';
 import RolesComponent from './components/roles.vue';
+import UsersComponent from './components/users.vue';
 import Home from './views/Home.vue';
 
 Vue.use(Router);
@@ -25,6 +26,11 @@ export default new Router({
             path: '/products',
             name: 'products',
             component: ProductsComponent
+        },
+        {
+            path: '/users',
+            name: 'users',
+            component: UsersComponent
         },
         {
             path: '/roles',

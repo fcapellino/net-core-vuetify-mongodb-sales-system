@@ -21,6 +21,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.IdentityModel.Tokens;
     using MongoDB.Driver;
+    using MongoDB.Driver.Linq;
     using ISR = Microsoft.AspNetCore.Identity;
 
     //[Authorize]
@@ -49,28 +50,33 @@
         //[Authorization(UserRoles.Administrator, UserRoles.Regular)]
         public async Task<IActionResult> GetUsersList(GetUsersListRequest request)
         {
-            var usersQuery = _mongoDbService.GetCollection<ApplicationUser>(Collections.Users);
-            var usersFilter = new FilterDefinitionBuilder<ApplicationUser>().Empty;
-            var findOptions = new FindOptions() { Collation = new Collation("en") };
+            var usersQuery = _mongoDbService.GetCollection<ApplicationUser>(Collections.Users).AsQueryable();
+            var rolesQuery = _mongoDbService.GetCollection<ApplicationRole>(Collections.Roles).AsQueryable();
 
-            var rolesQuery = _mongoDbService.GetCollection<ApplicationRole>(Collections.Roles);
-            var rolesFilter = new FilterDefinitionBuilder<ApplicationRole>().Empty;
-
-            if (!string.IsNullOrEmpty(request.SearchQuery))
+            if (!string.IsNullOrWhiteSpace(request.RoleId))
             {
-                usersFilter &= Builders<ApplicationUser>.Filter.Or(
-                    Builders<ApplicationUser>.Filter.Where(x => x.FullName.ToLower().Contains(request.SearchQuery.ToLower().Trim())),
-                    Builders<ApplicationUser>.Filter.Where(x => x.Email.ToLower().Contains(request.SearchQuery.ToLower().Trim())));
+                usersQuery = usersQuery.Where(x => x.Roles.Contains(request.RoleId));
             }
 
-            var totalItemCount = await usersQuery.Find(usersFilter).CountDocumentsAsync();
-            var users = await usersQuery.Find(usersFilter, findOptions)
-                    .ApplyOrdering(request.SortBy, request.SortDesc)
-                    .ApplyPaging(request.Page, request.PageSize)
-                    .ToListAsync();
+            if (!string.IsNullOrWhiteSpace(request.SearchQuery))
+            {
+                long.TryParse(request.SearchQuery, out long number);
 
-            var roles = await rolesQuery.Find(rolesFilter)
-                    .ToListAsync();
+                usersQuery = usersQuery.Where(x =>
+                    x.FullName.ToLower().Contains(request.SearchQuery.ToLower().Trim()) ||
+                    x.Address.ToLower().Contains(request.SearchQuery.ToLower().Trim()) ||
+                    x.DocumentNumber == number ||
+                    x.Email.ToLower().Contains(request.SearchQuery.ToLower().Trim()));
+            }
+
+            var totalItemCount = await usersQuery.CountAsync();
+            var users = await usersQuery
+                .ApplyOrdering(request.SortBy, request.SortDesc)
+                .ApplyPaging(request.Page, request.PageSize)
+                .ToListAsync();
+
+            var roles = await rolesQuery
+                .ToListAsync();
 
             var resources = new PagedListResource()
             {
@@ -88,10 +94,11 @@
                             item.DocumentType,
                             item.DocumentNumber,
                             item.Email,
+                            item.Enabled,
                             Role = new
                             {
                                 role.Id,
-                                role.Name
+                                Name = role.Name.ToUpper()
                             }
                         };
                     })
@@ -105,13 +112,10 @@
         //[Authorization(UserRoles.Administrator, UserRoles.Regular)]
         public async Task<IActionResult> GetUsersRoleList()
         {
-            var query = _mongoDbService.GetCollection<ApplicationRole>(Collections.Roles);
-            var filter = new FilterDefinitionBuilder<ApplicationRole>().Empty;
-            var findOptions = new FindOptions() { Collation = new Collation("en") };
-
-            var items = await query.Find(filter, findOptions)
-                    .ApplyOrdering(nameof(ApplicationRole.Name), descending: false)
-                    .ToListAsync();
+            var query = _mongoDbService.GetCollection<ApplicationRole>(Collections.Roles).AsQueryable();
+            var items = await query
+                .ApplyOrdering(nameof(ApplicationRole.Name), descending: false)
+                .ToListAsync();
 
             var resources = new ListResource()
             {
@@ -119,7 +123,7 @@
                             .Select(item => new
                             {
                                 item.Id,
-                                item.Name,
+                                Name = item.Name.ToUpper(),
                                 item.Description,
                                 item.Active
                             })
@@ -166,6 +170,21 @@
             var emailBody = $"Your account has been successfully created. Password: <b>[ {password} ].</b> To access the site click on the following <a target='_blank' href='{appBaseUrl}'>link.</a>";
             await _emailService.SendAsync(newUser.Email, "Basic Sales System", emailBody);
 
+            return new SuccessResult();
+        }
+
+        [HttpPost]
+        //[Authorization(UserRoles.Administrator)]
+        public async Task<IActionResult> EnableOrDisableUser(String id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                throw new CustomException("Invalid user specified.");
+            }
+
+            user.Enabled = !user.Enabled;
+            await _userManager.UpdateAsync(user);
             return new SuccessResult();
         }
 

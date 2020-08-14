@@ -25,6 +25,14 @@ export class UserService {
             .post('/api/users/createuser', body)
     }
 
+    enableOrDisableUser(id: any) {
+        var self = this;
+        return self.axios
+            .post('/api/users/enableordisableuser', {}, {
+                params: { id }
+            })
+    }
+
     deleteUser(id: any) {
         var self = this;
         return self.axios

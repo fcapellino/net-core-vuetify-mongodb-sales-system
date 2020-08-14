@@ -29,7 +29,7 @@
                         {{ getItemIndex(item) }}
                     </template>
                     <template v-slot:item.[name]="{ item }">
-                        {{ item.name.toUpperCase() }}
+                        {{ item.name }}
                     </template>
                     <template v-slot:item.[description]="{ item }">
                         {{ item.description }}
@@ -116,7 +116,7 @@
             }
 
             if (!Utils.isNullOrEmpty(sortBy)) {
-                itemsList = _.orderBy(itemsList, [item => item[sortBy].toString().toLowerCase()], [sortDesc ? 'desc':'asc']);
+                itemsList = _.orderBy(itemsList, [item => item[sortBy].toString().toLowerCase()], [sortDesc ? 'desc' : 'asc']);
             }
 
             var totalItemCount = itemsList.length;
