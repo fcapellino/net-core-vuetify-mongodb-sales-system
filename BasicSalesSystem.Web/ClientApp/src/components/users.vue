@@ -103,70 +103,59 @@
                                                   style="display:none;">
                                     </v-text-field>
                                 </v-col>
-                                <!--<v-col cols="12" xs="12">
+                                <v-col cols="12" xs="12">
                                     <v-text-field v-model.trim="userDialog.data.fullName"
                                                   label="Name"
                                                   dense
-                                                  :disabled="productDialog.readonly"
+                                                  :disabled="userDialog.readonly"
                                                   :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
                                     </v-text-field>
                                 </v-col>
                                 <v-col cols="12" xs="12">
-                                    <v-select v-model="productDialog.data.category"
-                                              :items="categoriesList"
+                                    <v-text-field v-model.trim="userDialog.data.address"
+                                                  label="Address"
+                                                  dense
+                                                  :disabled="userDialog.readonly"
+                                                  :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="12" xs="12">
+                                    <v-select v-model="userDialog.data.role"
+                                              :items="rolesList"
                                               item-value="id"
                                               item-text="name"
-                                              label="Category"
+                                              label="Role"
                                               dense
-                                              :disabled="productDialog.readonly"
+                                              :disabled="userDialog.readonly"
                                               :rules="[v => v!=null || 'This field is required']"
                                               return-object>
                                     </v-select>
                                 </v-col>
                                 <v-col cols="4" xs="4">
-                                    <v-text-field v-model.trim="productDialog.data.code"
-                                                  label="Code"
-                                                  dense
-                                                  :readonly="true"
-                                                  :disabled="productDialog.readonly"
-                                                  :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
-                                        <template slot="append">
-                                            <v-tooltip bottom v-if="!productDialog.readonly">
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <v-icon v-on="on" v-on:click="generateProductCode()">
-                                                        cached
-                                                    </v-icon>
-                                                </template>
-                                                <span>Generate</span>
-                                            </v-tooltip>
-                                        </template>
-                                    </v-text-field>
+                                    <v-select v-model="userDialog.data.documentType"
+                                              :items="documentTypesList"
+                                              label="Document type"
+                                              dense
+                                              :disabled="userDialog.readonly"
+                                              :rules="[v => v!=null || 'This field is required']">
+                                    </v-select>
                                 </v-col>
-                                <v-col cols="4" xs="4">
-                                    <v-text-field v-model.number="productDialog.data.stock"
-                                                  label="Stock"
+                                <v-col cols="8" xs="8">
+                                    <v-text-field v-model.number="userDialog.data.documentNumber"
+                                                  label="Document number"
                                                   dense
-                                                  :disabled="productDialog.readonly"
+                                                  :disabled="userDialog.readonly"
                                                   :rules="[v => (!!v && Number(v)>0 && Number.isInteger(v)) || 'This field is required']">
                                     </v-text-field>
                                 </v-col>
-                                <v-col cols="4" xs="4">
-                                    <v-text-field v-model.number="productDialog.data.unitPrice"
-                                                  label="Unit price"
+                                <v-col cols="12" xs="12">
+                                    <v-text-field v-model.trim="userDialog.data.email"
+                                                  label="Email"
                                                   dense
-                                                  :disabled="productDialog.readonly"
-                                                  :rules="[v => (!!v && Number(v)>0) || 'This field is required']">
+                                                  :disabled="userDialog.readonly"
+                                                  :rules="[v => (!!v && utils.isValidEmail(v)) || 'This field is required']">
                                     </v-text-field>
                                 </v-col>
-                                <v-col cols="12" xs="12">
-                                    <v-textarea v-model.trim="productDialog.data.description"
-                                                label="Description"
-                                                dense
-                                                :rows="4"
-                                                :disabled="productDialog.readonly"
-                                                :rules="[v => (!!v && !utils.isNullOrEmpty(v)) || 'This field is required']">
-                                    </v-textarea>
-                                </v-col>-->
                             </v-layout>
                         </v-container>
                     </v-form>
@@ -227,27 +216,19 @@
             readonly: null,
             deletion: null,
             data: {
-                id: null
+                id: null,
+                fullName: null,
+                address: null,
+                role: null,
+                documentType: null,
+                documentNumber: null,
+                email: null
             }
         };
         private rolesList: Array<any> = [];
         private documentTypesList: Array<any> = [
-            {
-                id: 'CI',
-                name: 'Cédula de Identidad'
-            },
-            {
-                id: 'DNI',
-                name: 'Documento Nacional de Identidad'
-            },
-            {
-                id: 'LC',
-                name: 'Libreta Cívica'
-            },
-            {
-                id: 'LE',
-                name: 'Libreta de Enrolamiento'
-            }
+            'DNI',
+            'PASSPORT'
         ];
 
         private async mounted() {
@@ -297,15 +278,15 @@
         }
         private showUserDialog(options) {
             var self = this;
-            //if (options?.product) {
-            //    self.productDialog.data.id = options.product.id;
-            //    self.productDialog.data.category = self.categoriesList.find(x => x.id === options.product.category.id);
-            //    self.productDialog.data.code = options.product.code;
-            //    self.productDialog.data.name = options.product.name;
-            //    self.productDialog.data.description = options.product.description;
-            //    self.productDialog.data.stock = options.product.stock;
-            //    self.productDialog.data.unitPrice = options.product.unitPrice;
-            //}
+            if (options?.user) {
+                self.userDialog.data.id = options.user.id;
+                self.userDialog.data.fullName = options.user.fullName;
+                self.userDialog.data.address = options.user.address;
+                self.userDialog.data.role = self.rolesList.find(x => x.id === options.user.role.id);
+                self.userDialog.data.documentType = options.user.documentType;
+                self.userDialog.data.documentNumber = options.user.documentNumber;
+                self.userDialog.data.email = options.user.email;
+            }
 
             self.userDialog.deletion = Utils.tryGet(() => options.deletion);
             self.userDialog.readonly = Utils.tryGet(() => options.readonly);
@@ -330,35 +311,30 @@
                     return;
                 }
 
-                //var bodyData = {
-                //    id: Utils.tryGet(() => self.productDialog.data.id),
-                //    categoryId: Utils.tryGet(() => self.productDialog.data.category.id),
-                //    code: Utils.tryGet(() => self.productDialog.data.code),
-                //    name: Utils.tryGet(() => self.productDialog.data.name),
-                //    description: Utils.tryGet(() => self.productDialog.data.description),
-                //    stock: Utils.tryGet(() => self.productDialog.data.stock),
-                //    unitPrice: Utils.tryGet(() => self.productDialog.data.unitPrice)
-                //};
+                var bodyData = {
+                    id: Utils.tryGet(() => self.userDialog.data.id),
+                    fullName: Utils.tryGet(() => self.userDialog.data.fullName),
+                    address: Utils.tryGet(() => self.userDialog.data.address),
+                    documentType: Utils.tryGet(() => self.userDialog.data.documentType),
+                    documentNumber: Utils.tryGet(() => self.userDialog.data.documentNumber),
+                    email: Utils.tryGet(() => self.userDialog.data.email),
+                    role: Utils.tryGet(() => self.userDialog.data.role.name)
+                };
 
-                //var response: AxiosResponse;
-                //if (!self.productDialog.data.id) {
-                //    response = await self.productService.createProduct(bodyData);
-                //}
-                //else {
-                //    if (!self.productDialog.deletion) {
-                //        response = await self.productService.updateProduct(bodyData);
-                //    }
-                //    else {
-                //        var id = self.productDialog.data.id;
-                //        response = await self.productService.deleteProduct(id);
-                //    }
-                //}
+                var response: AxiosResponse;
+                if (!self.userDialog.data.id) {
+                    response = await self.userService.createUser(bodyData);
+                }
+                else {
+                    var id = self.userDialog.data.id;
+                    response = await self.userService.deleteUser(id);
+                }
 
-                //var error = response?.data?.error;
-                //if (error === false) {
-                //    self.closeProductDialog();
-                //    await self.getProductsList();
-                //}
+                var error = response?.data?.error;
+                if (error === false) {
+                    self.closeUserDialog();
+                    await self.getUsersList();
+                }
             }
             catch (error) {
                 Notify.pushErrorNotification('Error. The operation cannot be completed.');

@@ -9,10 +9,8 @@
 
     public static class DocumentTypes
     {
-        public const string CI = "ci";
         public const string DNI = "dni";
-        public const string LC = "lc";
-        public const string LE = "le";
+        public const string PASSPORT = "passport";
     }
 
     public static class Collections

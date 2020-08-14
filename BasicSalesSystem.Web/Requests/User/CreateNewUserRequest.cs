@@ -31,7 +31,7 @@
                 .NotEmpty()
                 .Must(x =>
                 {
-                    return new[] { DocumentTypes.CI, DocumentTypes.DNI, DocumentTypes.LC, DocumentTypes.LE }.Contains(x.ToLower());
+                    return new[] { DocumentTypes.DNI, DocumentTypes.PASSPORT }.Contains(x.ToLower());
                 });
 
             RuleFor(x => x.DocumentNumber)
