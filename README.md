@@ -1,4 +1,6 @@
 # Basic Sales System with ASP.NET Core and MongoDB
+[![CircleCI](https://circleci.com/gh/fcapellino/net-core-vuetify-mongodb-sales-system/tree/master.svg?style=shield&circle-token=d207252b2c8f8ee8626892e067edac20f1aadba8)]()
+
 Basic sales and inventory management system built with ASP.NET Core, MongoDB and Vuetify.
 
 ## Technologies
