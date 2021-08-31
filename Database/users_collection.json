@@ -1,0 +1,92 @@
+[
+  {
+    "_id": {
+      "$oid": "5f71d2d80500c830eb683708"
+    },
+    "userName": "ceyikim833@rmomail.com",
+    "normalizedUserName": "CEYIKIM833@RMOMAIL.COM",
+    "email": "ceyikim833@rmomail.com",
+    "normalizedEmail": "CEYIKIM833@RMOMAIL.COM",
+    "emailConfirmed": false,
+    "passwordHash": "AQAAAAEAACcQAAAAENNkE4QEljo+G1XQHcCrF120nJBGKyUvoK0mCab3aNJz7CVsNf50Lger4RvYpoIjYw==",
+    "securityStamp": "SYWMKAMFZ6RZNF6JQY57ETUNV6NI637Z",
+    "concurrencyStamp": "9a28d9e9-2cda-4265-93a5-c22f77a9e16d",
+    "phoneNumber": "(5) 555-4729",
+    "phoneNumberConfirmed": false,
+    "twoFactorEnabled": false,
+    "lockoutEnd": null,
+    "lockoutEnabled": true,
+    "accessFailedCount": 0,
+    "authenticatorKey": null,
+    "roles": [
+      "5f3572d46d5f9bef92fee12e"
+    ],
+    "claims": [],
+    "logins": [],
+    "tokens": [],
+    "recoveryCodes": [],
+    "fullName": "Fabián Andrés Capellino",
+    "address": "Avda. de la Constitución 2222",
+    "enabled": true
+  },
+  {
+    "_id": {
+      "$oid": "5f71d528e670ac0059d0391d"
+    },
+    "userName": "cohey73290@vmgmails.com",
+    "normalizedUserName": "COHEY73290@VMGMAILS.COM",
+    "email": "cohey73290@vmgmails.com",
+    "normalizedEmail": "COHEY73290@VMGMAILS.COM",
+    "emailConfirmed": false,
+    "passwordHash": "AQAAAAEAACcQAAAAEEgDdrHmCnHB5M8l12GpW16S1nOaF4GXpH3P0TFUteSuyqWdD6Yc/b5ecfZCydYoxQ==",
+    "securityStamp": "ANTYOXA5OBXROTZWKMFT7GR7WJP7FSQ4",
+    "concurrencyStamp": "229ee355-345f-4252-b1c1-94b69136a888",
+    "phoneNumber": "(206) 555-9857",
+    "phoneNumberConfirmed": false,
+    "twoFactorEnabled": false,
+    "lockoutEnd": null,
+    "lockoutEnabled": true,
+    "accessFailedCount": 0,
+    "authenticatorKey": null,
+    "roles": [
+      "5f3572d56d5f9bef92fee130"
+    ],
+    "claims": [],
+    "logins": [],
+    "tokens": [],
+    "recoveryCodes": [],
+    "fullName": "Andrew Fuller",
+    "address": "908 W. Capital Way",
+    "enabled": true
+  },
+  {
+    "_id": {
+      "$oid": "5f71d934e670ac0059d0391e"
+    },
+    "userName": "hivasaw615@rmomail.com",
+    "normalizedUserName": "HIVASAW615@RMOMAIL.COM",
+    "email": "hivasaw615@rmomail.com",
+    "normalizedEmail": "HIVASAW615@RMOMAIL.COM",
+    "emailConfirmed": false,
+    "passwordHash": "AQAAAAEAACcQAAAAEGKtcl2iSiwk7KAyYiQ6UIx8ABlM1kc3QHo3fLVvyrQ/jQmVOKUl8V1cKerbzciMfA==",
+    "securityStamp": "SQSJUCFIPW42AVPSUXSKEZLGXV446UYF",
+    "concurrencyStamp": "f1b45b0b-075a-4f3b-8782-1ac60cffd32e",
+    "phoneNumber": "(171) 555-5646",
+    "phoneNumberConfirmed": false,
+    "twoFactorEnabled": false,
+    "lockoutEnd": null,
+    "lockoutEnabled": true,
+    "accessFailedCount": 0,
+    "authenticatorKey": null,
+    "roles": [
+      "5f3572d46d5f9bef92fee12f"
+    ],
+    "claims": [],
+    "logins": [],
+    "tokens": [],
+    "recoveryCodes": [],
+    "fullName": "Jonas Bergulfsen",
+    "address": "Boulevard Tirou, 255",
+    "enabled": true
+  }
+]

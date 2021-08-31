@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# S2696: Instance members should not write to "static" fields
+dotnet_diagnostic.S2696.severity = none
