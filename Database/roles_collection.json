@@ -1,0 +1,35 @@
+[
+  {
+    "_id": {
+      "$oid": "5f3572d46d5f9bef92fee12e"
+    },
+    "name": "administrator",
+    "normalizedName": "ADMINISTRATOR",
+    "concurrencyStamp": "be94234e-69cd-4a66-80a6-eee60ee3176f",
+    "claims": null,
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam felis nisi, fermentum sit amet magna at, condimentum viverra sem.",
+    "active": true
+  },
+  {
+    "_id": {
+      "$oid": "5f3572d46d5f9bef92fee12f"
+    },
+    "name": "storekeeper",
+    "normalizedName": "STOREKEEPER",
+    "concurrencyStamp": "f36da405-ff45-4848-b316-db1daf38e7bb",
+    "claims": null,
+    "description": "Aliquam faucibus, augue eget rutrum aliquet, urna ipsum condimentum libero, a blandit purus ligula eu augue.",
+    "active": true
+  },
+  {
+    "_id": {
+      "$oid": "5f3572d56d5f9bef92fee130"
+    },
+    "name": "salesman",
+    "normalizedName": "SALESMAN",
+    "concurrencyStamp": "a0df0b94-7f31-4bd0-9a8e-b643571a1425",
+    "claims": null,
+    "description": "Phasellus id luctus libero. Donec ut erat ut magna rhoncus egestas eu in justo.",
+    "active": true
+  }
+]

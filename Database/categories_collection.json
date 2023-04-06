@@ -1,0 +1,74 @@
+[
+  {
+    "_id": {
+      "$oid": "5f71dd6be670ac0059d03923"
+    },
+    "name": "Beauty",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur convallis luctus arcu consectetur.",
+    "active": true
+  },
+  {
+    "_id": {
+      "$oid": "5f71dd91e670ac0059d03924"
+    },
+    "name": "Camera & Photo",
+    "description": "Ut convallis eros tortor, vel blandit ante placerat et.",
+    "active": false
+  },
+  {
+    "_id": {
+      "$oid": "5f71dfae9b7e87c11fd00258"
+    },
+    "name": "Cell Phones",
+    "description": "Sed et purus nisl. Vestibulum porta leo sed ornare scelerisque. Nullam posuere dictum enim.",
+    "active": true
+  },
+  {
+    "_id": {
+      "$oid": "5f71dfc89b7e87c11fd00259"
+    },
+    "name": "Consumer Electronics",
+    "description": "Phasellus lobortis nec lectus sed porta. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nullam aliquet consectetur accumsan.",
+    "active": true
+  },
+  {
+    "_id": {
+      "$oid": "5f71e0799b7e87c11fd0025a"
+    },
+    "name": "Groceries",
+    "description": "Donec non odio et nunc finibus elementum. Vestibulum sodales commodo risus in tincidunt.",
+    "active": true
+  },
+  {
+    "_id": {
+      "$oid": "5f71e0919b7e87c11fd0025b"
+    },
+    "name": "Home & Garden",
+    "description": "Aenean elementum lacinia nisl sed mattis. Donec semper finibus semper.",
+    "active": false
+  },
+  {
+    "_id": {
+      "$oid": "5f71e1509b7e87c11fd0025c"
+    },
+    "name": "Industrial and Scientific",
+    "description": "Nullam et suscipit sem. Duis non magna quis nisi faucibus varius id ut justo. Curabitur volutpat mauris turpis, quis vulputate mi dictum ac.",
+    "active": true
+  },
+  {
+    "_id": {
+      "$oid": "5f71e19e9b7e87c11fd0025d"
+    },
+    "name": "Music",
+    "description": "Sed imperdiet ultrices nulla, vel sodales ex aliquet aliquet.",
+    "active": true
+  },
+  {
+    "_id": {
+      "$oid": "5f73787b36073b59eefd9ac4"
+    },
+    "name": "Luggage",
+    "description": "In in risus dui. Mauris sed est imperdiet, pretium massa eu, sagittis metus. Suspendisse potenti.",
+    "active": true
+  }
+]
